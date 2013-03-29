@@ -8,8 +8,8 @@ import (
 	"image"
 	"image/draw"
 	_ "image/gif"
-	_ "image/jpeg"
-	"image/png"
+	"image/jpeg"
+	_ "image/png"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -24,7 +24,7 @@ var (
 	max_height    = 1200 // and height
 	font_scaling  = 0.06 // font scaling, as a factor of image width
 	height_factor = 0.14 // where to draw the top/bottom text, as a factor
-						 // of image height
+	// of image height
 )
 
 // turns a raster.Fix32 into number of pixels
@@ -95,7 +95,6 @@ func Process(url string, top string, bottom string, color image.Image) (image.Im
 	return img, nil
 }
 
-
 // this is the main handler; it decides whether to call Process to create
 // the image, or to serve it from cache
 func serveImage(w http.ResponseWriter, r *http.Request) {
@@ -113,7 +112,7 @@ func serveImage(w http.ResponseWriter, r *http.Request) {
 	file, err := ioutil.ReadFile("cache/" + hash)
 	if err == nil {
 		// if image available in cache, don't re-create it
-		w.Header().Add("Content-Type", "image/png")
+		w.Header().Add("Content-Type", "image/jpeg")
 		w.Write(file)
 		fmt.Println("Served from cache")
 		return
@@ -132,12 +131,12 @@ func serveImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	cache_file, _ := os.Create("cache/" + hash)
-	w.Header().Add("Content-Type", "image/png")
+	w.Header().Add("Content-Type", "image/jpeg")
 
 	// return the image to the user, and also write it in cache (at this
 	// point, we are certain that the image is not already cached)
-	png.Encode(w, img)
-	png.Encode(cache_file, img)
+	jpeg.Encode(w, img, nil)
+	jpeg.Encode(cache_file, img, nil)
 }
 
 func main() {
